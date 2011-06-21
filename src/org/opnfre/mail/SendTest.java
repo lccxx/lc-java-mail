@@ -13,6 +13,8 @@ public class SendTest extends TestCase {
 		assertTrue(send.connect() == 220);
 		assertTrue(send.sayHelo("51pass.org") == 250);
 		send.addTo("刘冲", "liuchong14@qq.com");
+		send.addBcc("liuchong14@gmail.com");
+		send.addBcc("liuchong14@163.com");
 		send.setFrom("liuchong", "liuchong@51pass.org");
 		send.setSubject("Test sendmail by LcJavaMail，中文, " + uuid);
 		send.setMessage("<h2>Hi!</h2>\n<p>Test，测试，中文</p>");

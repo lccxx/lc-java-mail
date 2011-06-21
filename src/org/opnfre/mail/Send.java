@@ -97,7 +97,6 @@ public class Send {
 		sb.append("MIME-Version: 1.0\r\n");
 		sb.append("Content-type: text/html; charset=utf-8\r\n");
 		sb.append("Content-Transfer-Encoding: base64\r\n");
-		sb.append("Bcc: liuchong14@gmail.com, bowencheng@gmail.com\r\n");
 		if (bcc.size() > 0) {
 			sb.append("Bcc: ");
 			sb.append(genBccsField());
@@ -131,10 +130,17 @@ public class Send {
 		out.write(("MAIL FROM: <" + formMail + ">\r\n").getBytes());
 		if (new Integer(in.nextLine().substring(0, 3)) != 250)
 			return -3;
-		Entry<String, String> toInfo = to.get(0).entrySet().iterator().next();
-		out.write(("RCPT TO: <" + toInfo.getValue() + ">\r\n").getBytes());
-		if (new Integer(in.nextLine().substring(0, 3)) != 250)
-			return -4;
+		for (Map<String, String> one : to) {
+			Entry<String, String> toInfo = one.entrySet().iterator().next();
+			out.write(("RCPT TO: <" + toInfo.getValue() + ">\r\n").getBytes());
+			if (new Integer(in.nextLine().substring(0, 3)) != 250)
+				return -4;
+		}
+		for (String email : bcc) {
+			out.write(("RCPT TO: <" + email + ">\r\n").getBytes());
+			if (new Integer(in.nextLine().substring(0, 3)) != 250)
+				return -4;
+		}
 		out.write("DATA\r\n".getBytes());
 		if (new Integer(in.nextLine().substring(0, 3)) != 354)
 			return -5;
