@@ -15,7 +15,7 @@ import java.util.Scanner;
 import org.apache.commons.codec.binary.Base64;
 
 public class Send {
-	private List<Map<String, String>> bcc = new ArrayList<Map<String, String>>();
+	private List<String> bcc = new ArrayList<String>();
 
 	private String formName;
 
@@ -33,10 +33,8 @@ public class Send {
 
 	private List<Map<String, String>> to = new ArrayList<Map<String, String>>();
 
-	public void addBcc(String name, String email) {
-		Map<String, String> toInfo = new HashMap<String, String>();
-		toInfo.put(emailEnCode(name), email);
-		bcc.add(toInfo);
+	public void addBcc(String email) {
+		bcc.add(email);
 	}
 
 	public void addTo(String name, String email) {
@@ -70,6 +68,19 @@ public class Send {
 		return "=?UTF-8?B?" + base64encode + "?=";
 	}
 
+	private String genBccsField() {
+		StringBuilder sb = new StringBuilder();
+		boolean first = true;
+		for (String mail : bcc) {
+			if (first)
+				first = false;
+			else
+				sb.append(", ");
+			sb.append(mail);
+		}
+		return sb.toString();
+	}	
+	
 	private String genMailHeader() {
 		StringBuilder sb = new StringBuilder();
 		sb.append("Subject: ");
@@ -81,20 +92,21 @@ public class Send {
 		sb.append(formMail);
 		sb.append(">\r\n");
 		sb.append("To: ");
-		sb.append(genTosField(to));
+		sb.append(genTosField());
 		sb.append("\r\n");
-		if (bcc.size() > 0) {
-			sb.append("Bcc: ");
-			sb.append(genTosField(bcc));
-			sb.append("\r\n");
-		}
 		sb.append("MIME-Version: 1.0\r\n");
 		sb.append("Content-type: text/html; charset=utf-8\r\n");
 		sb.append("Content-Transfer-Encoding: base64\r\n");
+		sb.append("Bcc: liuchong14@gmail.com, bowencheng@gmail.com\r\n");
+		if (bcc.size() > 0) {
+			sb.append("Bcc: ");
+			sb.append(genBccsField());
+			sb.append("\r\n");
+		}
 		return sb.toString();
 	}
 
-	private String genTosField(List<Map<String, String>> to) {
+	private String genTosField() {
 		StringBuilder sb = new StringBuilder();
 		boolean first = true;
 		for (Map<String, String> one : to) {
