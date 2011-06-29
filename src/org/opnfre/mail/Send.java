@@ -37,9 +37,13 @@ public class Send {
 		bcc.add(email);
 	}
 
+	public void addTo(String email) {
+		addTo(email, null);
+	}
+
 	public void addTo(String name, String email) {
 		Map<String, String> toInfo = new HashMap<String, String>();
-		toInfo.put(emailEnCode(name), email);
+		toInfo.put(email, emailEnCode(name));
 		to.add(toInfo);
 	}
 
@@ -64,6 +68,8 @@ public class Send {
 	}
 
 	private String emailEnCode(String str) {
+		if (str == null)
+			return null;
 		String base64encode = Base64.encodeBase64String(str.getBytes());
 		return "=?UTF-8?B?" + base64encode + "?=";
 	}
@@ -79,8 +85,8 @@ public class Send {
 			sb.append(mail);
 		}
 		return sb.toString();
-	}	
-	
+	}
+
 	private String genMailHeader() {
 		StringBuilder sb = new StringBuilder();
 		sb.append("Subject: ");
@@ -114,9 +120,13 @@ public class Send {
 			else
 				sb.append(", ");
 			Entry<String, String> toInfo = one.entrySet().iterator().next();
-			sb.append(toInfo.getKey());
-			sb.append(" <");
+			if (toInfo.getValue() == null) {
+				sb.append(toInfo.getKey());
+				continue;
+			}
 			sb.append(toInfo.getValue());
+			sb.append(" <");
+			sb.append(toInfo.getKey());
 			sb.append(">");
 		}
 		return sb.toString();
@@ -132,7 +142,7 @@ public class Send {
 			return -3;
 		for (Map<String, String> one : to) {
 			Entry<String, String> toInfo = one.entrySet().iterator().next();
-			out.write(("RCPT TO: <" + toInfo.getValue() + ">\r\n").getBytes());
+			out.write(("RCPT TO: <" + toInfo.getKey() + ">\r\n").getBytes());
 			if (new Integer(in.nextLine().substring(0, 3)) != 250)
 				return -4;
 		}

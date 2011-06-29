@@ -21,6 +21,19 @@ public class SendTest extends TestCase {
 		assertTrue(send.go() == 250);
 		assertTrue(send.close() == 221);
 	}
+	
+	public void testSendSimple() throws IOException {
+		String uuid = UUID.randomUUID().toString();
+		Send send = new Send();
+		assertTrue(send.connect() == 220);
+		assertTrue(send.sayHelo("51pass.org") == 250);
+		send.setFrom("刘冲", "liuchong@51pass.org");
+		send.addTo("liuchong14@gmail.com");
+		send.setSubject("Test sendmail by LcJavaMail，中文, Simple, " + uuid);
+		send.setMessage("<h2>Hi!</h2>\n<p>Test，测试，中文</p>");
+		assertTrue(send.go() == 250);
+		assertTrue(send.close() == 221);
+	}
 
 	public static void main(String[] args) {
 		TestSuite ts = new TestSuite();
