@@ -38,7 +38,7 @@ public class Send {
 	}
 
 	public void addTo(String email) {
-		addTo(email, null);
+		addTo(null, email);
 	}
 
 	public void addTo(String name, String email) {
@@ -149,11 +149,11 @@ public class Send {
 		for (String email : bcc) {
 			out.write(("RCPT TO: <" + email + ">\r\n").getBytes());
 			if (new Integer(in.nextLine().substring(0, 3)) != 250)
-				return -4;
+				return -5;
 		}
 		out.write("DATA\r\n".getBytes());
 		if (new Integer(in.nextLine().substring(0, 3)) != 354)
-			return -5;
+			return -6;
 		out.write(genMailHeader().getBytes());
 		out.write("\r\n".getBytes());
 		out.write(msg.getBytes());
